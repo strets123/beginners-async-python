@@ -59,13 +59,21 @@ Another way of getting round these constraints is just to ask for help. In this 
 
 3) Multi threaded
 
-In this case I have my toaster next to my frying pan and I can keep my hands and eyes on both at once. In this way I get everything cooked and I can slow down or speed up the egs to make sure the eggs and the toast are all just right.
+In this case I have my toaster next to my frying pan and I can keep my hands and eyes on both at once. In this way I get everything cooked and I can slow down or speed up the eggs to make sure the eggs and the toast are all just right. I use my multiple arms to acheive this.
 
 4) Coroutines
 
-In this case I decide to throw away my old toaster and get a new one which pops up . Now I can concentrate on my eggs most of the time and life is plenty easier. When the eggs are done I can go back to the toaster knowing that the toast will be siting there still warm for me.
+In this case I decide to throw away my old toaster and get a new one which pops up and also detects when the bread is just right. 
 
-Note that throughout the coroutine example the breakfast preparer (me) is only ever doing one thing at a time. I can set off a backbround task (the toasting) which takes some time to set up but then I am only thinking about the egg. Arguably method 4 is the least stressful. 
+[http://news.bbc.co.uk/1/hi/england/cambridgeshire/4291816.stm]
+
+I also get myself the amazing "Heston Blumenthal BEG800SIL One Degree Precision Poacher"
+
+[https://www.go-electrical.co.uk/sage-heston-blumenthal-beg800sil-the-one-degree-precision-poacher.html?gclid=CJqwia-nk9MCFY8Q0wodLqcL4Q]
+
+Now I can simply set off my toast and eggs at the appropriate time and also have time to do some other things, perhaps get out my autonymous vacuum cleaner and send it to trip someone up.
+
+Note that throughout the coroutine example the breakfast preparer (me) is only ever doing one thing at a time. I can set off a bunch of background tasks and then relax and wait for them to tell me they are done. Arguably method 4 is the least stressful, the technology has handed back control to me. If however the technology has not been implemented well then everything could go wrong.
 
 So what is the programatic equivalent of turning on the toaster then leaving it and waiting for the sound of it popping up?
 
@@ -75,6 +83,10 @@ Send task to be run ->
     Get back an acknowledgement and wait for task completion (we wait using a Future object)
     Do some other stuff
     Hear an event and go back to the task to do whatever needs finishing off.
+
+
+
+
 
 # Example 1: Sleep for 8 hours in 10 seconds:
 
