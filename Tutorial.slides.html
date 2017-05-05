@@ -11855,23 +11855,11 @@ a.anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Twisted-up-in-a-distributed-tornado---a-beginners-guide-to-async-frameworks-in-python">Twisted up in a distributed tornado - a beginners guide to async frameworks in python<a class="anchor-link" href="#Twisted-up-in-a-distributed-tornado---a-beginners-guide-to-async-frameworks-in-python">&#182;</a></h1>
-</div>
-</div>
-</div></section></section><section><section>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>At some point in a career in data science, software development or data engineering you will be looking to develop a piece of code that runs alongside another piece of code. For example, you might want to:</p>
+<h1 id="Twisted-up-in-a-distributed-tornado---a-beginners-guide-to-async-frameworks-in-python">Twisted up in a distributed tornado - a beginners guide to async frameworks in python<a class="anchor-link" href="#Twisted-up-in-a-distributed-tornado---a-beginners-guide-to-async-frameworks-in-python">&#182;</a></h1><p>Andrew Stretton</p>
+<p>Software Engineer @ <a href="https://zegami.com">https://zegami.com</a></p>
 <ul>
-<li>Use all of your processors when running a script</li>
-<li>Consume social media data as it is created</li>
-<li>Create a super simple task scheduler without an ugly while True loop</li>
-<li>Understand how Jupyter notebooks work</li>
-<li>Write to a database and move on to the next task without waiting for confirmation</li>
-<li>Call a function and throw an exception if it takes too long</li>
+<li>astretton@zegami.com</li>
+<li><a href="https://github.com/strets123">https://github.com/strets123</a></li>
 </ul>
 
 </div>
@@ -11882,12 +11870,68 @@ a.anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this tutorial we will</p>
-<ul>
-<li>Introduce the <code>concurrent.futures</code> module in python 3 </li>
-<li>Look at asynchronous single-threaded frameworks.</li>
-<li>Combine both to run a simple image processing algorithm</li>
-</ul>
+<h2 id="Setup:">Setup:<a class="anchor-link" href="#Setup:">&#182;</a></h2>
+</div>
+</div>
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Use-cases-of-async">Use cases of async<a class="anchor-link" href="#Use-cases-of-async">&#182;</a></h1>
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Use-all-of-your-processors-when-running-a-script">Use all of your processors when running a script<a class="anchor-link" href="#Use-all-of-your-processors-when-running-a-script">&#182;</a></h2><p>We will demonstrate how to max out your processors and network by running an image processing algorithm over this dataset:</p>
+<p><a href="https://demo.zegami.com/ashmolean%20paintings">https://demo.zegami.com/ashmolean%20paintings</a></p>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Consume-social-media-data-as-it-is-created">Consume social media data as it is created<a class="anchor-link" href="#Consume-social-media-data-as-it-is-created">&#182;</a></h2><p>We will demonstrate how to read the wikipedia changes feed</p>
+<p><a href="https://stream.wikimedia.org/v2/stream/recentchange">https://stream.wikimedia.org/v2/stream/recentchange</a></p>
+<h2 id="Write-to-a-database-and-move-on-to-the-next-task-without-waiting-for-confirmation">Write to a database and move on to the next task without waiting for confirmation<a class="anchor-link" href="#Write-to-a-database-and-move-on-to-the-next-task-without-waiting-for-confirmation">&#182;</a></h2><p>We will save the events to MongoDB</p>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Create-a-super-simple-task-scheduler-without-an-ugly-while-True-loop">Create a super simple task scheduler without an ugly while True loop<a class="anchor-link" href="#Create-a-super-simple-task-scheduler-without-an-ugly-while-True-loop">&#182;</a></h2><p>We will create a simple clock on the terminal and perhaps go on to make it work on a web page</p>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Call-a-function-and-throw-an-exception-if-it-takes-too-long">Call a function and throw an exception if it takes too long<a class="anchor-link" href="#Call-a-function-and-throw-an-exception-if-it-takes-too-long">&#182;</a></h2><p>We will demonstrate how tricky this is and go through all the options</p>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Understand-how-Jupyter-notebooks-work">Understand how Jupyter notebooks work<a class="anchor-link" href="#Understand-how-Jupyter-notebooks-work">&#182;</a></h2><p>We will look at the Jupyter architecture and then how we can reproduce parts of it with websockets and Tornado</p>
 
 </div>
 </div>
@@ -11897,7 +11941,7 @@ a.anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Definitions">Definitions<a class="anchor-link" href="#Definitions">&#182;</a></h2>
+<h2 id="First-a-little-theory...-definitions">First a little theory... definitions<a class="anchor-link" href="#First-a-little-theory...-definitions">&#182;</a></h2>
 </div>
 </div>
 </div></section></section><section><section>
@@ -11917,9 +11961,12 @@ a.anchor-link {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Asynchronous">Asynchronous<a class="anchor-link" href="#Asynchronous">&#182;</a></h3><ul>
-<li>Used to present the impression of concurrent or parallel tasking </li>
-<li>For a process that needs to do work away from the current application </li>
-<li>Where we don't want to wait and block our application awaiting the response.</li>
+<li><p>Used to present the impression of concurrent or parallel tasking</p>
+</li>
+<li><p>For a process that needs to do work away from the current application</p>
+</li>
+<li><p>Where we don't want to wait and block our application awaiting the response.</p>
+</li>
 </ul>
 
 </div>
@@ -11945,12 +11992,54 @@ a.anchor-link {
 <h3 id="Executors">Executors<a class="anchor-link" href="#Executors">&#182;</a></h3><p>Executors are threads or processes that exist separately to the task that is being run.</p>
 <p>You can think of an executor as being like a road.</p>
 <p><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgvO4FY_kEwF6-BmNH7BoZsordtULkTa-SIkznhhnXD14uGUd8Pg" alt=""></p>
-<ul>
-<li>It can carry all kinds of vehicule (task) to where they need to go. </li>
-<li>It has numbers of lanes which determines its total capacity.</li>
-<li>It does not itself change state or move around</li>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="It-can-carry-all-kinds-of-vehicule-(task)-to-where-they-need-to-go.">It can carry all kinds of vehicule (task) to where they need to go.<a class="anchor-link" href="#It-can-carry-all-kinds-of-vehicule-(task)-to-where-they-need-to-go.">&#182;</a></h2>
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="It-has-numbers-of-lanes-which-determines-its-total-capacity.">It has numbers of lanes which determines its total capacity.<a class="anchor-link" href="#It-has-numbers-of-lanes-which-determines-its-total-capacity.">&#182;</a></h2>
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="It-does-not-itself-change-state-or-move-around,-it-is-still-there-when-the-cars-have-all-driven-through">It does not itself change state or move around, it is still there when the cars have all driven through<a class="anchor-link" href="#It-does-not-itself-change-state-or-move-around,-it-is-still-there-when-the-cars-have-all-driven-through">&#182;</a></h2>
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Two-types-of-Executor-in-the-standard-library">Two types of Executor in the standard library<a class="anchor-link" href="#Two-types-of-Executor-in-the-standard-library">&#182;</a></h2><ul>
+<li><code>ThreadPoolExecutor</code> which manages threads and <code>ProcessPoolExecutor</code> which manages processes.</li>
 </ul>
-<p>There are two types of Executor in the standard library <code>ThreadPoolExecutor</code> which manages threads and <code>ProcessPoolExecutor</code> which manages processes.</p>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>Here we use a ThreadPoolExecutor to open some threads and then we run a single function on one of those threads.</p>
 
 </div>
@@ -12180,175 +12269,17 @@ Return of 2
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Excersise-1:-t-SNE-Analysis-of-an-art-gallery-dataset">Excersise 1: t-SNE Analysis of an art gallery dataset<a class="anchor-link" href="#Excersise-1:-t-SNE-Analysis-of-an-art-gallery-dataset">&#182;</a></h3><p><a href="https://demo.zegami.com">Zegami</a> is used to tag and analyse numerous image-centric data sets.</p>
-<p>In this example we use Zegami help museums to annotate and digitise paintings. One option for clusting images is the t-distributed stochastic neighbor embedding algorithm as implemented in Scikit Learn. The steps involved in the data processing are:</p>
+<p>In this example we use Zegami help museums to annotate and digitise paintings. One option for clusting images is the t-SNE (t-distributed stochastic neighbor embedding) algorithm as implemented in Scikit Learn. More about the algorithm here: <a href="https://www.youtube.com/watch?v=RJVL80Gg3lA">https://www.youtube.com/watch?v=RJVL80Gg3lA</a>. The steps involved in the data processing are:</p>
 <ol>
 <li>Download and parse a CSV file with the image IDs</li>
 <li>Download the images </li>
 <li>Resize the images and convert into linear arrays of pixels</li>
 <li>Perform t-SNE on the list of arrays to give an X and Y coordinate for each image</li>
 </ol>
-<p>Below is some single-threaded example code. In this tutorial we are going to first rewrite the code to run in a <code>ProcessPoolExecutor</code>. We will later optimise the http code using async python.</p>
+<p>At <a href="http://localhost:8888/edit/ashmolean.py">http://localhost:8888/edit/ashmolean.py</a> is some single-threaded example code. In this tutorial we are going to first rewrite the code to run in a <code>ProcessPoolExecutor</code>. We will later optimise the http code using async python.</p>
 
 </div>
 </div>
-</div></section><section>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">TTF_URL</span> <span class="o">=</span> <span class="s2">&quot;http://tutorial.zegami.net.s3.eu-west-2.amazonaws.com/ashmolean/data.tab&quot;</span>
-
-<span class="n">IMAGE_URL</span> <span class="o">=</span> <span class="s2">&quot;http://tutorial.zegami.net.s3.eu-west-2.amazonaws.com/ashmolean/</span><span class="si">{}</span><span class="s2">.jpg&quot;</span>
-
-<span class="c1"># TSNE on images</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">Image</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="k">import</span> <span class="n">TSNE</span>
-<span class="kn">from</span> <span class="nn">distributed.client</span> <span class="k">import</span> <span class="n">Client</span><span class="p">,</span>   <span class="n">wait</span>
-<span class="kn">from</span> <span class="nn">distributed</span> <span class="k">import</span> <span class="n">worker_client</span><span class="p">,</span> <span class="n">LocalCluster</span>
-<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="k">import</span> <span class="n">ThreadPoolExecutor</span><span class="p">,</span> <span class="n">as_completed</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_columns&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="n">output_file</span> <span class="o">=</span> <span class="s2">&quot;zegami_tsne.tab&quot;</span>
-
-<span class="c1"># setup a standard image size; this will distort some images but will get everything into the same shape</span>
-<span class="n">STANDARD_SIZE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">img_data_to_matrix</span><span class="p">(</span><span class="n">image_data</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    takes a jpeg or oher image bytes object and turns it into a numpy array of RGB pixels</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">bio</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
-    <span class="n">bio</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">bio</span><span class="p">)</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">STANDARD_SIZE</span><span class="p">)</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">getdata</span><span class="p">())</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">img</span>
-
-
-<span class="k">def</span> <span class="nf">flatten_image</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    takes in an (m, n) numpy array and flattens it</span>
-<span class="sd">    into an array of shape (1, m * n)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">img_wide</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">img_wide</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-
-<span class="k">def</span> <span class="nf">get_data</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Requests the CSV data over the web and returns it as a cleaned pandas dataframe</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TTF_URL</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin-1&quot;</span><span class="p">)),</span>
-                       <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
-                       <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
-
-
-<span class="k">def</span> <span class="nf">get_pca</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Runs the TSNE algorithm over a set of image data</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">pca</span> <span class="o">=</span> <span class="n">TSNE</span><span class="p">()</span>
-
-    <span class="n">X</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]})</span>
-    <span class="k">return</span> <span class="n">results</span>
-
-
-<span class="k">def</span> <span class="nf">image_data_from_id</span><span class="p">(</span><span class="n">image_id</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Take the image id and return the bytes content of the image via an http request</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;nan&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;ID should not be nan&quot;</span><span class="p">)</span>
-    <span class="n">image_url</span> <span class="o">=</span> <span class="n">IMAGE_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span>
-    <span class="n">image_data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span><span class="o">.</span><span class="n">content</span>
-    <span class="k">return</span> <span class="n">image_data</span>
-
-
-<span class="k">def</span> <span class="nf">process_image_bytes</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Reshape the image pixels into a flat list of tuples of pixel values. The list should be of equla size for all images</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">matrix</span> <span class="o">=</span> <span class="n">img_data_to_matrix</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">flatten_image</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
-
-
-
-
-
-<span class="k">def</span> <span class="nf">chunks</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Yield successive n-sized chunks from l.&quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">),</span> <span class="n">n</span><span class="p">):</span>
-        <span class="k">yield</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">n</span><span class="p">]</span>
-
-
-<span class="k">def</span> <span class="nf">get_tsne</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Given a flat list of tuples of pixel values write out the TSNE CSV output file</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">get_pca</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
-    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==========================&quot;</span><span class="p">)</span>
-    <span class="c1"># print str(df)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Appended x and y coordinates and created &quot;</span> <span class="o">+</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==========================&quot;</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    main script runner for the synchronous version of this ashmolean data processing script</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">get_data</span><span class="p">()[:</span><span class="mi">10</span><span class="p">]</span>
-    <span class="n">images</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">bytes_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">image_data_from_id</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">image_id</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">process_image_bytes</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span> <span class="k">for</span> <span class="n">image_bytes</span> <span class="ow">in</span> <span class="n">bytes_data</span><span class="p">]</span>
-
-    <span class="c1">#pca = TSNE()</span>
-    <span class="c1"># or can do PCA</span>
-    <span class="n">get_tsne</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-
-<span class="n">run</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-<div class="prompt"></div>
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>==========================
-Appended x and y coordinates and created zegami_tsne.tab.
-==========================
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -12444,16 +12375,6 @@ Appended x and y coordinates and created zegami_tsne.tab.
 <p>I also get myself the amazing "Heston Blumenthal BEG800SIL One Degree Precision Poacher"</p>
 <p>[<a href="https://www.go-electrical.co.uk/sage-heston-blumenthal-beg800sil-the-one-degree-precision-poacher.html?gclid=CJqwia-nk9MCFY8Q0wodLqcL4Q">https://www.go-electrical.co.uk/sage-heston-blumenthal-beg800sil-the-one-degree-precision-poacher.html?gclid=CJqwia-nk9MCFY8Q0wodLqcL4Q</a>]</p>
 <p>Now I can simply set off my toast and eggs at the appropriate time and also have time to do some other things, perhaps get out my autonymous vacuum cleaner and send it to trip someone up.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that throughout the asynchronous example the breakfast preparer (me) is only ever doing one thing at a time. I can set off a bunch of background tasks and then relax and wait for them to tell me they are done. Arguably method 4 is the least stressful, the technology has handed back control to me.</p>
 
 </div>
 </div>
@@ -12594,6 +12515,34 @@ Appended x and y coordinates and created zegami_tsne.tab.
 </div>
 </div>
 </div></section><section>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">tornado.ioloop</span> <span class="k">import</span> <span class="n">IOLoop</span>
+<span class="kn">from</span> <span class="nn">tornado</span> <span class="k">import</span>    <span class="n">gen</span>
+
+<span class="nd">@gen</span><span class="o">.</span><span class="n">coroutine</span>
+<span class="k">def</span> <span class="nf">task</span><span class="p">():</span>
+    <span class="k">yield</span> <span class="n">gen</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+
+
+<span class="nd">@gen</span><span class="o">.</span><span class="n">coroutine</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">yield</span> <span class="p">[</span><span class="n">task</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3600</span><span class="p">)]</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">run_sync</span><span class="p">(</span><span class="n">main</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div></section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -12603,7 +12552,7 @@ Appended x and y coordinates and created zegami_tsne.tab.
 
 </div>
 </div>
-</div>
+</div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
@@ -12653,11 +12602,30 @@ Appended x and y coordinates and created zegami_tsne.tab.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Lots-more-tutorials-from-Yeray-Diaz-Diaz-here:">Lots more tutorials from Yeray Diaz Diaz here:<a class="anchor-link" href="#Lots-more-tutorials-from-Yeray-Diaz-Diaz-here:">&#182;</a></h2><p><a href="https://github.com/yeraydiazdiaz/asyncio-ftwpd">https://github.com/yeraydiazdiaz/asyncio-ftwpd</a></p>
+
+</div>
+</div>
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="We-keep-using-asyncios-event_loop-and-Tornado's-IOLoop...">We keep using asyncios <code>event_loop</code> and Tornado's <code>IOLoop</code>...<a class="anchor-link" href="#We-keep-using-asyncios-event_loop-and-Tornado's-IOLoop...">&#182;</a></h1><p>What is an event loop???</p>
 <p>"In computer science, the event loop, message dispatcher, message loop, message pump, or run loop is a programming construct that waits for and dispatches events or messages in a program."</p>
 <p>Events were introduced in Python 3 as we have seen, Python 2 does not have anything that can break the flow of a program apart from exceptions.</p>
 <p>If we first consider a loop that is waiting for only one kind of event, that is simpler to conceptualise...</p>
-<p>From the following URL I can open a connection and then follow every change to Wikipedia.</p>
+
+</div>
+</div>
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Reading-Social-Media-data-as-it-is-created">Reading Social Media data as it is created<a class="anchor-link" href="#Reading-Social-Media-data-as-it-is-created">&#182;</a></h2><p>From the following URL I can open a connection and then follow every change to Wikipedia.</p>
 <p><a href="https://stream.wikimedia.org/v2/stream/recentchange">https://stream.wikimedia.org/v2/stream/recentchange</a></p>
 <p>We can read data synchonously from the URL like this:</p>
 
@@ -13025,7 +12993,8 @@ Appended x and y coordinates and created zegami_tsne.tab.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Excersise-6:-Take-this-terminal-clock-example-and-reimplement-it-using-asyncio-or-tornado-to-provide-the-timer">Excersise 6: Take this terminal clock example and reimplement it using asyncio or tornado to provide the timer<a class="anchor-link" href="#Excersise-6:-Take-this-terminal-clock-example-and-reimplement-it-using-asyncio-or-tornado-to-provide-the-timer">&#182;</a></h3>
+<h3 id="Excersise-5:-Take-this-terminal-clock-example-and-reimplement-it-using-asyncio-or-tornado-to-provide-the-timer">Excersise 5: Take this terminal clock example and reimplement it using asyncio or tornado to provide the timer<a class="anchor-link" href="#Excersise-5:-Take-this-terminal-clock-example-and-reimplement-it-using-asyncio-or-tornado-to-provide-the-timer">&#182;</a></h3><p><a href="http://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.PeriodicCallback">http://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.PeriodicCallback</a></p>
+
 </div>
 </div>
 </div></section><section>
@@ -13134,7 +13103,7 @@ Appended x and y coordinates and created zegami_tsne.tab.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Timeout-tasks-with-subproces.call">Timeout tasks with <code>subproces.call</code><a class="anchor-link" href="#Timeout-tasks-with-subproces.call">&#182;</a></h3><p>Equally we can also add a timeout when we shell out to a subprocess using <code>subprocess.run</code> new in python 3.5.</p>
+<h3 id="Timeout-tasks-with-subprocess.call">Timeout tasks with <code>subprocess.call</code><a class="anchor-link" href="#Timeout-tasks-with-subprocess.call">&#182;</a></h3><p>Equally we can also add a timeout when we shell out to a subprocess using <code>subprocess.run</code> new in python 3.5.</p>
 
 </div>
 </div>
@@ -13277,7 +13246,17 @@ class MyTask(luigi.Task):
 <li>It is used to access either a set of local subprocesses or a cluster of worker machines</li>
 <li>Access to a running IOLoop</li>
 </ul>
-<h4 id="&quot;Run-later&quot;-features">"Run later" features<a class="anchor-link" href="#&quot;Run-later&quot;-features">&#182;</a></h4><ul>
+<p><a href="https://github.com/dask/distributed">https://github.com/dask/distributed</a></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="&quot;Run-later&quot;-features-of-Dask/Distributed">"Run later" features of Dask/Distributed<a class="anchor-link" href="#&quot;Run-later&quot;-features-of-Dask/Distributed">&#182;</a></h3><ul>
 <li>Futures can be used as arguments to <code>distributed.Client().submit</code></li>
 <li><code>worker_client</code> can be used to process data remotely on the worker</li>
 <li>Data structures like <a href="http://dask.pydata.org/en/latest/index.html">Dask.delayed, array, bag and DataFrame</a> help build up computations</li>
@@ -13333,9 +13312,17 @@ and <a href="http://localhost:8888/edit/distrunner_tornado.py">http://localhost:
 <li>Tornado handles this message and passes the Executor over the 0mq protocol</li>
 <li>When the task is done a message is sent back to tornado and then in tunr back to the browser</li>
 </ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="http://jupyter.readthedocs.io/en/latest/_images/notebook_components.png" alt=""></p>
-<p>Why Tornado for systems like this?</p>
-<p>The single threaded nature of Tornado makes it ideal for keeping multiple browser tabs up to date - it is impossible to append to a stream with multiple threads - we must use a single threaded server like Tornado or Node.js.</p>
+<h3 id="Why-Tornado-for-systems-like-this?">Why Tornado for systems like this?<a class="anchor-link" href="#Why-Tornado-for-systems-like-this?">&#182;</a></h3><p>The single threaded nature of Tornado makes it ideal for keeping multiple browser tabs up to date - it is impossible to append to a stream with multiple threads - we must use a single threaded server like Tornado or Node.js.</p>
 
 </div>
 </div>
@@ -13402,6 +13389,24 @@ ioloop.IOLoop.current().start()
 <li>How to follow a streaming HTTP request asynchronously and save it to a database</li>
 <li>How to timeout the running of a functiuon</li>
 <li>How to combine asynchronous execution of HTTP requests with synchronous concurrent data processing and to distribute that across multiple machines.</li>
+</ul>
+
+</div>
+</div>
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Thanks">Thanks<a class="anchor-link" href="#Thanks">&#182;</a></h2><ul>
+<li>Zegami (Talk to me if you wnat to use it, work for us etc!!!)</li>
+<li>Matthew Wrocklin - developer of dask/distributed</li>
+<li>Everyone for listening</li>
+</ul>
+<h2 id="Andrew-Stretton">Andrew Stretton<a class="anchor-link" href="#Andrew-Stretton">&#182;</a></h2><ul>
+<li>astretton@zegami.com</li>
+<li><a href="https://github.com/strets123">https://github.com/strets123</a></li>
 </ul>
 
 </div>
