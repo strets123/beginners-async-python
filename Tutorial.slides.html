@@ -11944,6 +11944,7 @@ a.anchor-link {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Executors">Executors<a class="anchor-link" href="#Executors">&#182;</a></h3><p>Executors are threads or processes that exist separately to the task that is being run.</p>
 <p>You can think of an executor as being like a road.</p>
+<p><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgvO4FY_kEwF6-BmNH7BoZsordtULkTa-SIkznhhnXD14uGUd8Pg" alt=""></p>
 <ul>
 <li>It can carry all kinds of vehicule (task) to where they need to go. </li>
 <li>It has numbers of lanes which determines its total capacity.</li>
@@ -12120,7 +12121,8 @@ hello
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="as_completed">as_completed<a class="anchor-link" href="#as_completed">&#182;</a></h3><p>The <code>as_completed</code> function allows us to iterate a list of futures as they are completed, for example:</p>
+<h3 id="as_completed">as_completed<a class="anchor-link" href="#as_completed">&#182;</a></h3><p>The <code>as_completed</code> function allows us to iterate a list of futures as they are completed.</p>
+<p><img src="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRXO5DbttPr5NFffK9KQnNzOaxCKlbz0EVd0-2qG0hV9cQafkgB" alt=""></p>
 
 </div>
 </div>
@@ -12195,39 +12197,44 @@ Return of 2
 <div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">TTF_URL</span> <span class="o">=</span> <span class="s2">&quot;https://demo.zegami.com/ashmolean_paintings_data/data.tab&quot;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">TTF_URL</span> <span class="o">=</span> <span class="s2">&quot;http://tutorial.zegami.net.s3.eu-west-2.amazonaws.com/ashmolean/data.tab&quot;</span>
 
-<span class="n">IMAGE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://demo.zegami.com/ashmolean_paintings_data/images/</span><span class="si">{}</span><span class="s2">.jpg&quot;</span>
-
+<span class="n">IMAGE_URL</span> <span class="o">=</span> <span class="s2">&quot;http://tutorial.zegami.net.s3.eu-west-2.amazonaws.com/ashmolean/</span><span class="si">{}</span><span class="s2">.jpg&quot;</span>
 
 <span class="c1"># TSNE on images</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">requests</span>
-
-
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">Image</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="k">import</span> <span class="n">TSNE</span>
+<span class="kn">from</span> <span class="nn">distributed.client</span> <span class="k">import</span> <span class="n">Client</span><span class="p">,</span>   <span class="n">wait</span>
+<span class="kn">from</span> <span class="nn">distributed</span> <span class="k">import</span> <span class="n">worker_client</span><span class="p">,</span> <span class="n">LocalCluster</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="k">import</span> <span class="n">ThreadPoolExecutor</span><span class="p">,</span> <span class="n">as_completed</span>
 <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_columns&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;zegami_tsne.tab&quot;</span>
+<span class="n">output_file</span> <span class="o">=</span> <span class="s2">&quot;zegami_tsne.tab&quot;</span>
 
-
-
-<span class="c1">#setup a standard image size; this will distort some images but will get everything into the same shape</span>
+<span class="c1"># setup a standard image size; this will distort some images but will get everything into the same shape</span>
 <span class="n">STANDARD_SIZE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+
 <span class="k">def</span> <span class="nf">img_data_to_matrix</span><span class="p">(</span><span class="n">image_data</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    takes a filename and turns it into a numpy array of RGB pixels</span>
+<span class="sd">    takes a jpeg or oher image bytes object and turns it into a numpy array of RGB pixels</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">image_data</span><span class="p">))</span>
+
+    <span class="n">bio</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+    <span class="n">bio</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">bio</span><span class="p">)</span>
     <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">STANDARD_SIZE</span><span class="p">)</span>
     <span class="n">img</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">getdata</span><span class="p">())</span>
     <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">img</span>
+
 
 <span class="k">def</span> <span class="nf">flatten_image</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -12240,28 +12247,72 @@ Return of 2
 
 
 <span class="k">def</span> <span class="nf">get_data</span><span class="p">():</span>
-    <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TTF_URL</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin-1&quot;</span><span class="p">)),</span>
-                <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">header</span><span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Requests the CSV data over the web and returns it as a cleaned pandas dataframe</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TTF_URL</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin-1&quot;</span><span class="p">)),</span>
+                       <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
 
 <span class="k">def</span> <span class="nf">get_pca</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runs the TSNE algorithm over a set of image data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pca</span> <span class="o">=</span> <span class="n">TSNE</span><span class="p">()</span>
 
     <span class="n">X</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]})</span>
     <span class="k">return</span> <span class="n">results</span>
 
+
 <span class="k">def</span> <span class="nf">image_data_from_id</span><span class="p">(</span><span class="n">image_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Take the image id and return the bytes content of the image via an http request</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;nan&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;ID should not be nan&quot;</span><span class="p">)</span>
     <span class="n">image_url</span> <span class="o">=</span> <span class="n">IMAGE_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span>
-    <span class="n">image_data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_url</span><span class="p">)</span><span class="o">.</span><span class="n">content</span>
+    <span class="n">image_data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span><span class="o">.</span><span class="n">content</span>
     <span class="k">return</span> <span class="n">image_data</span>
 
+
 <span class="k">def</span> <span class="nf">process_image_bytes</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reshape the image pixels into a flat list of tuples of pixel values. The list should be of equla size for all images</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">matrix</span> <span class="o">=</span> <span class="n">img_data_to_matrix</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">flatten_image</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
 
+
+
+
+
+<span class="k">def</span> <span class="nf">chunks</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Yield successive n-sized chunks from l.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">),</span> <span class="n">n</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">n</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">get_tsne</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a flat list of tuples of pixel values write out the TSNE CSV output file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">get_pca</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==========================&quot;</span><span class="p">)</span>
+    <span class="c1"># print str(df)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Appended x and y coordinates and created &quot;</span> <span class="o">+</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==========================&quot;</span><span class="p">)</span>
+
 <span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    main script runner for the synchronous version of this ashmolean data processing script</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">get_data</span><span class="p">()[:</span><span class="mi">10</span><span class="p">]</span>
     <span class="n">images</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
@@ -12271,15 +12322,7 @@ Return of 2
 
     <span class="c1">#pca = TSNE()</span>
     <span class="c1"># or can do PCA</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">get_pca</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
-    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==========================&quot;</span><span class="p">)</span>
-    <span class="c1"># print str(df)</span>
-    <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Appended x and y coordinates and created &quot;</span> <span class="o">+</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;==========================&quot;</span><span class="p">)</span>
+    <span class="n">get_tsne</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 
 <span class="n">run</span><span class="p">()</span>
 </pre></div>
@@ -12556,17 +12599,7 @@ Appended x and y coordinates and created zegami_tsne.tab.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Excersise-3:">Excersise 3:<a class="anchor-link" href="#Excersise-3:">&#182;</a></h3><p>Now make a version that works in python 2</p>
-
-</div>
-</div>
-</div></section><section>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Excersise-4:">Excersise 4:<a class="anchor-link" href="#Excersise-4:">&#182;</a></h3><p>Do the same thing with the ThreadPoolExecutor and concurrent.futures</p>
+<h3 id="Excersise-3:">Excersise 3:<a class="anchor-link" href="#Excersise-3:">&#182;</a></h3><p>Do the same thing with the ThreadPoolExecutor and concurrent.futures</p>
 
 </div>
 </div>
@@ -12609,6 +12642,7 @@ Appended x and y coordinates and created zegami_tsne.tab.
 <li>In python 2 we can only break the flow control of the application by using an exception. </li>
 <li>Various new language features have been added in python 3 which give us more options.</li>
 <li>On linux, creating threads can be faster than using an async function </li>
+<li>There is not a large performance difference between waiting for many things in many threads and waiting in one thread asynchronously</li>
 </ul>
 <h1 id="Modern-CPUs-are-really-good-at-context-switching-between-threads!">Modern CPUs are really good at context switching between threads!<a class="anchor-link" href="#Modern-CPUs-are-really-good-at-context-switching-between-threads!">&#182;</a></h1>
 </div>
@@ -12731,6 +12765,7 @@ Appended x and y coordinates and created zegami_tsne.tab.
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">partial_data</span> <span class="o">=</span> <span class="kc">None</span>
 
+    <span class="c1"># def data_from_line(self, line):</span>
 
     <span class="k">def</span> <span class="nf">streaming_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
@@ -12749,10 +12784,14 @@ Appended x and y coordinates and created zegami_tsne.tab.
                     <span class="bp">self</span><span class="o">.</span><span class="n">partial_data</span> <span class="o">=</span> <span class="n">line</span>
 
 
+
+
+
+
 <span class="nd">@gen</span><span class="o">.</span><span class="n">coroutine</span>
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="n">http_client</span> <span class="o">=</span> <span class="n">httpclient</span><span class="o">.</span><span class="n">AsyncHTTPClient</span><span class="p">()</span>
-    <span class="n">dr</span> <span class="o">=</span> <span class="n">DataReceiver</span><span class="p">()</span>
+    <span class="n">dr</span> <span class="o">=</span> <span class="n">DataReciever</span><span class="p">()</span>
     <span class="k">yield</span> <span class="n">http_client</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span>
         <span class="s1">&#39;https://stream.wikimedia.org/v2/stream/recentchange&#39;</span><span class="p">,</span>
         <span class="n">streaming_callback</span><span class="o">=</span><span class="n">dr</span><span class="o">.</span><span class="n">streaming_callback</span><span class="p">,</span>
@@ -12792,6 +12831,7 @@ Appended x and y coordinates and created zegami_tsne.tab.
 <span class="k">class</span> <span class="nc">DataReciever</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">partial_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">partial_chars</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">motor</span><span class="o">.</span><span class="n">motor_tornado</span><span class="o">.</span><span class="n">MotorClient</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="s1">&#39;test_database&#39;</span><span class="p">]</span>
 
@@ -12800,7 +12840,9 @@ Appended x and y coordinates and created zegami_tsne.tab.
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;result </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">repr</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">inserted_id</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">streaming_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+
         <span class="n">data</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
         <span class="n">lines</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">partial_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -12814,6 +12856,10 @@ Appended x and y coordinates and created zegami_tsne.tab.
                     <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">test_collection</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">my_callback</span><span class="p">)</span>
                 <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">partial_data</span> <span class="o">=</span> <span class="n">line</span>
+
+
+
+
 
 
 <span class="nd">@gen</span><span class="o">.</span><span class="n">coroutine</span>
@@ -12853,7 +12899,9 @@ Appended x and y coordinates and created zegami_tsne.tab.
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tornado</span> <span class="k">import</span> <span class="n">ioloop</span><span class="p">,</span> <span class="n">gen</span><span class="p">,</span> <span class="n">httpclient</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#tornado example with an error</span>
+
+<span class="kn">from</span> <span class="nn">tornado</span> <span class="k">import</span> <span class="n">ioloop</span><span class="p">,</span> <span class="n">gen</span><span class="p">,</span> <span class="n">httpclient</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">motor</span>
 
@@ -12940,7 +12988,7 @@ Appended x and y coordinates and created zegami_tsne.tab.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Excersise-5:-Use-the-tornado-asyncio-bridge-to-write-the-data-to-MongoDB-using-motor.">Excersise 5: Use <a href="http://www.tornadoweb.org/en/stable/asyncio.html#tornado.platform.asyncio.AsyncIOMainLoop">the tornado asyncio bridge</a> to write the data to MongoDB using motor.<a class="anchor-link" href="#Excersise-5:-Use-the-tornado-asyncio-bridge-to-write-the-data-to-MongoDB-using-motor.">&#182;</a></h3>
+<h3 id="Excersise-4:-Use-the-tornado-asyncio-bridge-to-write-the-data-to-MongoDB-using-motor.">Excersise 4: Use <a href="http://www.tornadoweb.org/en/stable/asyncio.html#tornado.platform.asyncio.AsyncIOMainLoop">the tornado asyncio bridge</a> to write the data to MongoDB using motor.<a class="anchor-link" href="#Excersise-4:-Use-the-tornado-asyncio-bridge-to-write-the-data-to-MongoDB-using-motor.">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12977,7 +13025,7 @@ Appended x and y coordinates and created zegami_tsne.tab.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Task:-Take-this-terminal-clock-example-and-reimplement-it-using-asyncio-or-tornado-to-provide-the-timer">Task: Take this terminal clock example and reimplement it using asyncio or tornado to provide the timer<a class="anchor-link" href="#Task:-Take-this-terminal-clock-example-and-reimplement-it-using-asyncio-or-tornado-to-provide-the-timer">&#182;</a></h3>
+<h3 id="Excersise-6:-Take-this-terminal-clock-example-and-reimplement-it-using-asyncio-or-tornado-to-provide-the-timer">Excersise 6: Take this terminal clock example and reimplement it using asyncio or tornado to provide the timer<a class="anchor-link" href="#Excersise-6:-Take-this-terminal-clock-example-and-reimplement-it-using-asyncio-or-tornado-to-provide-the-timer">&#182;</a></h3>
 </div>
 </div>
 </div></section><section>
@@ -13145,13 +13193,14 @@ class MyTask(luigi.Task):
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Back-to-our-image-processing-task">Back to our image processing task<a class="anchor-link" href="#Back-to-our-image-processing-task">&#182;</a></h2><p>We have now seen the building blocks that we need to request our image data asynchonously and process it synchronously:</p>
+<h2 id="Back-to-our-image-processing-task">Back to our image processing task<a class="anchor-link" href="#Back-to-our-image-processing-task">&#182;</a></h2><p>We now seem to have the building blocks that we need to request our image data asynchonously and process it synchronously:</p>
 <ol>
 <li>Get the CSV file as a dataframe</li>
-<li>Start an asyncio event loop</li>
-<li>Send HTTP requests to get the image data using aiohttp</li>
+<li>Start a tornado event loop</li>
+<li>Send HTTP requests to get the image data using tornado</li>
 <li>As the futures are completed, submit the data to a ProcessPoolExecutor</li>
 </ol>
+<p>BUT... we don't really want tornado to be driving the whole app, quite fiddly to do, perhaps there is a framwork that gives us access to the ioloop from a separate thread...</p>
 
 </div>
 </div>
@@ -13161,93 +13210,20 @@ class MyTask(luigi.Task):
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">TTF_URL</span> <span class="o">=</span> <span class="s2">&quot;https://demo.zegami.com/ashmolean_paintings_data/data.tab&quot;</span>
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
 
-<span class="n">IMAGE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://demo.zegami.com/ashmolean_paintings_data/images/</span><span class="si">{}</span><span class="s2">.jpg&quot;</span>
+</div>
+</div>
+</div>
 
-
-<span class="c1"># TSNE on images</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">requests</span>
-
-
-<span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">Image</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="k">import</span> <span class="n">TSNE</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_columns&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;zegami_tsne.tab&quot;</span>
-
-
-
-<span class="c1">#setup a standard image size; this will distort some images but will get everything into the same shape</span>
-<span class="n">STANDARD_SIZE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">img_data_to_matrix</span><span class="p">(</span><span class="n">image_data</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    takes a filename and turns it into a numpy array of RGB pixels</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">image_data</span><span class="p">))</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">STANDARD_SIZE</span><span class="p">)</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">getdata</span><span class="p">())</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">img</span>
-
-<span class="k">def</span> <span class="nf">flatten_image</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    takes in an (m, n) numpy array and flattens it</span>
-<span class="sd">    into an array of shape (1, m * n)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">img_wide</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">img_wide</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-
-<span class="k">def</span> <span class="nf">get_data</span><span class="p">():</span>
-    <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TTF_URL</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin-1&quot;</span><span class="p">)),</span>
-                <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">header</span><span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">get_pca</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="n">pca</span> <span class="o">=</span> <span class="n">TSNE</span><span class="p">()</span>
-
-    <span class="n">X</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]})</span>
-    <span class="k">return</span> <span class="n">results</span>
-
-<span class="k">def</span> <span class="nf">image_data_from_id</span><span class="p">(</span><span class="n">image_id</span><span class="p">):</span>
-    <span class="n">image_url</span> <span class="o">=</span> <span class="n">IMAGE_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span>
-    <span class="n">image_data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_url</span><span class="p">)</span><span class="o">.</span><span class="n">content</span>
-    <span class="k">return</span> <span class="n">image_data</span>
-
-<span class="k">def</span> <span class="nf">process_image_bytes</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">):</span>
-    <span class="n">matrix</span> <span class="o">=</span> <span class="n">img_data_to_matrix</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">flatten_image</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">get_data</span><span class="p">()[:</span><span class="mi">10</span><span class="p">]</span>
-    <span class="n">images</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">bytes_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">image_data_from_id</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">image_id</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">process_image_bytes</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span> <span class="k">for</span> <span class="n">image_bytes</span> <span class="ow">in</span> <span class="n">bytes_data</span><span class="p">]</span>
-
-    <span class="c1">#pca = TSNE()</span>
-    <span class="c1"># or can do PCA</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">get_pca</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
-    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==========================&quot;</span><span class="p">)</span>
-    <span class="c1"># print str(df)</span>
-    <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Appended x and y coordinates and created &quot;</span> <span class="o">+</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;==========================&quot;</span><span class="p">)</span>
-
-<span class="n">run</span><span class="p">()</span>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
 </pre></div>
 
 </div>
@@ -13263,10 +13239,6 @@ class MyTask(luigi.Task):
 <h1 id="Learnings-so-far">Learnings so far<a class="anchor-link" href="#Learnings-so-far">&#182;</a></h1><h3 id="Good-things:">Good things:<a class="anchor-link" href="#Good-things:">&#182;</a></h3><ul>
 <li>All of our attempts at running the image processing algorithm were faster than doing it synchronously</li>
 <li>The simple combination of <code>ThreadPoolExecutor</code> for HTTP requests and <code>ProcessPoolExecutor</code> for data processing worked fine</li>
-<li>No real difference between doing async HTTP and using ThreadPoolExecutor <ul>
-<li>use whichever is more convenient in a given situation</li>
-</ul>
-</li>
 <li>Aiohttp or Requests can both be used succesfully for streaming endpoints</li>
 <li>Asyncio and Tornado provide easy ways to create timers in python</li>
 <li>Tornado can clearly be helpful for inter-process communication in projects like Luigi</li>
@@ -13289,6 +13261,7 @@ class MyTask(luigi.Task):
 <li>We want to be able to just declare how the functions should be called and then go for a cup of weak herbal tea while it runs on the cluster</li>
 </ul>
 </li>
+<li>Running everything from a central IOLoop can be fiddly...</li>
 </ul>
 
 </div>
@@ -13302,6 +13275,7 @@ class MyTask(luigi.Task):
 <h3 id="Dask/Distributed-a-framework-built-on-Tornado-and-ThreadPoolExecutor">Dask/Distributed a framework built on <code>Tornado</code> and <code>ThreadPoolExecutor</code><a class="anchor-link" href="#Dask/Distributed-a-framework-built-on-Tornado-and-ThreadPoolExecutor">&#182;</a></h3><ul>
 <li>Works similarly to the <code>ThreadPoolExecutor</code> </li>
 <li>It is used to access either a set of local subprocesses or a cluster of worker machines</li>
+<li>Access to a running IOLoop</li>
 </ul>
 <h4 id="&quot;Run-later&quot;-features">"Run later" features<a class="anchor-link" href="#&quot;Run-later&quot;-features">&#182;</a></h4><ul>
 <li>Futures can be used as arguments to <code>distributed.Client().submit</code></li>
@@ -13327,213 +13301,94 @@ class MyTask(luigi.Task):
 <li>As the futures are completed process the images</li>
 <li>Return a list of pixels and run the TSNE plot</li>
 </ol>
+<p>see <a href="http://localhost:8888/edit/distrunner.py">http://localhost:8888/edit/distrunner.py</a>
+and <a href="http://localhost:8888/edit/distrunner_tornado.py">http://localhost:8888/edit/distrunner_tornado.py</a></p>
 
 </div>
 </div>
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">TTF_URL</span> <span class="o">=</span> <span class="s2">&quot;https://demo.zegami.com/ashmolean_paintings_data/data.tab&quot;</span>
-
-<span class="n">IMAGE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://demo.zegami.com/ashmolean_paintings_data/images/</span><span class="si">{}</span><span class="s2">.jpg&quot;</span>
-
-
-<span class="c1"># TSNE on images</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">requests</span>
-
-
-<span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">Image</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="k">import</span> <span class="n">TSNE</span>
-<span class="kn">from</span> <span class="nn">distributed.deploy.local</span> <span class="k">import</span> <span class="n">LocalCluster</span>
-<span class="kn">from</span> <span class="nn">distributed</span> <span class="k">import</span> <span class="n">Client</span><span class="p">,</span> <span class="n">as_completed</span><span class="p">,</span> <span class="n">local_client</span> <span class="k">as</span> <span class="n">worker_client</span>
-
-<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_columns&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;zegami_tsne.tab&quot;</span>
-
-
-
-<span class="c1">#setup a standard image size; this will distort some images but will get everything into the same shape</span>
-<span class="n">STANDARD_SIZE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">img_data_to_matrix</span><span class="p">(</span><span class="n">image_data</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    takes a filename and turns it into a numpy array of RGB pixels</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">image_data</span><span class="p">))</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">STANDARD_SIZE</span><span class="p">)</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">getdata</span><span class="p">())</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">img</span>
-
-<span class="k">def</span> <span class="nf">flatten_image</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    takes in an (m, n) numpy array and flattens it</span>
-<span class="sd">    into an array of shape (1, m * n)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">img_wide</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">img_wide</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-
-<span class="k">def</span> <span class="nf">get_data</span><span class="p">():</span>
-    <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">TTF_URL</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin-1&quot;</span><span class="p">)),</span>
-                <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">header</span><span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">get_pca</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="n">pca</span> <span class="o">=</span> <span class="n">TSNE</span><span class="p">()</span>
-
-    <span class="n">X</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]})</span>
-    <span class="k">return</span> <span class="n">results</span>
-
-<span class="k">def</span> <span class="nf">image_data_from_id</span><span class="p">(</span><span class="n">image_id</span><span class="p">):</span>
-    <span class="n">image_url</span> <span class="o">=</span> <span class="n">IMAGE_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span>
-    <span class="n">image_data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_url</span><span class="p">)</span><span class="o">.</span><span class="n">content</span>
-    <span class="k">return</span> <span class="n">image_data</span>
-
-<span class="k">def</span> <span class="nf">process_image_bytes</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">):</span>
-    <span class="n">matrix</span> <span class="o">=</span> <span class="n">img_data_to_matrix</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">flatten_image</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
-
-    
-    
-<span class="k">def</span> <span class="nf">run_subtask</span><span class="p">(</span><span class="n">ids</span><span class="p">):</span>
-    <span class="k">with</span> <span class="n">worker_client</span> <span class="k">as</span> <span class="n">wc</span><span class="p">:</span>
-        <span class="c1">#where we need threads use the worker client</span>
-        <span class="n">bytes_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">wc</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">image_data_from_id</span><span class="p">,</span> <span class="n">image_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">image_id</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span>
-        <span class="c1">#no point in using threads here, just do it synchronously</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">process_image_bytes</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span> <span class="k">for</span> <span class="n">image_bytes</span> <span class="ow">in</span> <span class="n">as_completed</span><span class="p">(</span><span class="n">bytes_data</span><span class="p">)]</span>
-        <span class="k">return</span> <span class="n">data</span>
-
-        
-        
-<span class="k">def</span> <span class="nf">chunks</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Yield successive n-sized chunks from l.&quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">),</span> <span class="n">n</span><span class="p">):</span>
-        <span class="k">yield</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">n</span><span class="p">]</span>
-
-        
-<span class="k">def</span> <span class="nf">get_tsne</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">data_chunks</span><span class="p">):</span>
-    <span class="n">flattened</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">data_chunks</span><span class="p">]</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">get_pca</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
-    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==========================&quot;</span><span class="p">)</span>
-    <span class="c1"># print str(df)</span>
-    <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Appended x and y coordinates and created &quot;</span> <span class="o">+</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;==========================&quot;</span><span class="p">)</span>
-
-        
-
-
-<span class="k">def</span> <span class="nf">run_on_cluster</span><span class="p">():</span>
-    <span class="c1">#create a cluster with 10 threads per worker</span>
-    <span class="k">with</span> <span class="n">worker_client</span> <span class="k">as</span> <span class="n">wc</span><span class="p">:</span>
-        
-        <span class="n">df</span> <span class="o">=</span> <span class="n">get_data</span><span class="p">()</span>
-        <span class="n">images</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-        <span class="n">image_chunks</span> <span class="o">=</span> <span class="n">chunks</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
-        <span class="c1">#get back some futures</span>
-        <span class="n">processed_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">wc</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">run_subtask</span><span class="p">,</span> <span class="n">chunk</span><span class="p">)</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">]</span>
-        <span class="n">wait</span><span class="p">(</span><span class="n">processed_data</span><span class="p">)</span>
-        <span class="n">get_tsne</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">data_chunks</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s2">&quot;done&quot;</span>
-    <span class="c1">#run the t-SNE analysis</span>
-    
-    
-    
-<span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
-    <span class="c1">#create a cluster with 10 threads per worker</span>
-    <span class="n">lc</span> <span class="o">=</span> <span class="n">LocalCluster</span><span class="p">()</span>
-    <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
-    <span class="n">future</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">run_on_cluster</span><span class="p">)</span>
-    <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
-    
-
-    
-<span class="n">run</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span> 
 </pre></div>
 
 </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-<div class="prompt"></div>
-
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">OSError</span>                                   Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-5-07da684f4bb3&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-intense-fg ansi-bold">    125</span> 
-<span class="ansi-green-intense-fg ansi-bold">    126</span> 
-<span class="ansi-green-fg">--&gt; 127</span><span class="ansi-red-fg"> </span>run<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
-
-<span class="ansi-green-fg">&lt;ipython-input-5-07da684f4bb3&gt;</span> in <span class="ansi-cyan-fg">run</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-intense-fg ansi-bold">    118</span> <span class="ansi-green-fg">def</span> run<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-intense-fg ansi-bold">    119</span>     <span class="ansi-red-fg">#create a cluster with 10 threads per worker</span>
-<span class="ansi-green-fg">--&gt; 120</span><span class="ansi-red-fg">     </span>lc <span class="ansi-blue-fg">=</span> LocalCluster<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    121</span>     client <span class="ansi-blue-fg">=</span> Client<span class="ansi-blue-fg">(</span>lc<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    122</span>     future <span class="ansi-blue-fg">=</span> client<span class="ansi-blue-fg">.</span>submit<span class="ansi-blue-fg">(</span>run_on_cluster<span class="ansi-blue-fg">)</span>
-
-<span class="ansi-green-fg">/work/anaconda/lib/python3.5/site-packages/distributed/deploy/local.py</span> in <span class="ansi-cyan-fg">__init__</span><span class="ansi-blue-fg">(self, n_workers, threads_per_worker, nanny, loop, start, scheduler_port, silence_logs, diagnostics_port, services, worker_services, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">     96</span>         self.scheduler = Scheduler(loop=self.loop, ip=&#39;127.0.0.1&#39;,
-<span class="ansi-green-intense-fg ansi-bold">     97</span>                                    services=services)
-<span class="ansi-green-fg">---&gt; 98</span><span class="ansi-red-fg">         </span>self<span class="ansi-blue-fg">.</span>scheduler<span class="ansi-blue-fg">.</span>start<span class="ansi-blue-fg">(</span>scheduler_port<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     99</span>         self<span class="ansi-blue-fg">.</span>workers <span class="ansi-blue-fg">=</span> <span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">]</span>
-<span class="ansi-green-intense-fg ansi-bold">    100</span> 
-
-<span class="ansi-green-fg">/work/anaconda/lib/python3.5/site-packages/distributed/scheduler.py</span> in <span class="ansi-cyan-fg">start</span><span class="ansi-blue-fg">(self, port, start_queues)</span>
-<span class="ansi-green-intense-fg ansi-bold">    392</span> 
-<span class="ansi-green-intense-fg ansi-bold">    393</span>         <span class="ansi-green-fg">if</span> self<span class="ansi-blue-fg">.</span>status <span class="ansi-blue-fg">!=</span> <span class="ansi-blue-fg">&#39;running&#39;</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-fg">--&gt; 394</span><span class="ansi-red-fg">             </span>self<span class="ansi-blue-fg">.</span>listen<span class="ansi-blue-fg">(</span>port<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    395</span> 
-<span class="ansi-green-intense-fg ansi-bold">    396</span>             self<span class="ansi-blue-fg">.</span>status <span class="ansi-blue-fg">=</span> <span class="ansi-blue-fg">&#39;running&#39;</span>
-
-<span class="ansi-green-fg">/work/anaconda/lib/python3.5/site-packages/distributed/core.py</span> in <span class="ansi-cyan-fg">listen</span><span class="ansi-blue-fg">(self, port)</span>
-<span class="ansi-green-intense-fg ansi-bold">    151</span>         <span class="ansi-green-fg">while</span> <span class="ansi-green-fg">True</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-intense-fg ansi-bold">    152</span>             <span class="ansi-green-fg">try</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-fg">--&gt; 153</span><span class="ansi-red-fg">                 </span>super<span class="ansi-blue-fg">(</span>Server<span class="ansi-blue-fg">,</span> self<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">.</span>listen<span class="ansi-blue-fg">(</span>port<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    154</span>                 <span class="ansi-green-fg">break</span>
-<span class="ansi-green-intense-fg ansi-bold">    155</span>             <span class="ansi-green-fg">except</span> <span class="ansi-blue-fg">(</span>socket<span class="ansi-blue-fg">.</span>error<span class="ansi-blue-fg">,</span> OSError<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-
-<span class="ansi-green-fg">/work/anaconda/lib/python3.5/site-packages/tornado/tcpserver.py</span> in <span class="ansi-cyan-fg">listen</span><span class="ansi-blue-fg">(self, port, address)</span>
-<span class="ansi-green-intense-fg ansi-bold">    124</span>         the<span class="ansi-red-fg"> </span><span class="ansi-red-fg">`</span><span class="ansi-blue-fg">.</span>IOLoop<span class="ansi-red-fg">`</span><span class="ansi-blue-fg">.</span>
-<span class="ansi-green-intense-fg ansi-bold">    125</span>         &#34;&#34;&#34;
-<span class="ansi-green-fg">--&gt; 126</span><span class="ansi-red-fg">         </span>sockets <span class="ansi-blue-fg">=</span> bind_sockets<span class="ansi-blue-fg">(</span>port<span class="ansi-blue-fg">,</span> address<span class="ansi-blue-fg">=</span>address<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    127</span>         self<span class="ansi-blue-fg">.</span>add_sockets<span class="ansi-blue-fg">(</span>sockets<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    128</span> 
-
-<span class="ansi-green-fg">/work/anaconda/lib/python3.5/site-packages/tornado/netutil.py</span> in <span class="ansi-cyan-fg">bind_sockets</span><span class="ansi-blue-fg">(port, address, family, backlog, flags, reuse_port)</span>
-<span class="ansi-green-intense-fg ansi-bold">    192</span> 
-<span class="ansi-green-intense-fg ansi-bold">    193</span>         sock<span class="ansi-blue-fg">.</span>setblocking<span class="ansi-blue-fg">(</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-fg">--&gt; 194</span><span class="ansi-red-fg">         </span>sock<span class="ansi-blue-fg">.</span>bind<span class="ansi-blue-fg">(</span>sockaddr<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    195</span>         bound_port <span class="ansi-blue-fg">=</span> sock<span class="ansi-blue-fg">.</span>getsockname<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">]</span>
-<span class="ansi-green-intense-fg ansi-bold">    196</span>         sock<span class="ansi-blue-fg">.</span>listen<span class="ansi-blue-fg">(</span>backlog<span class="ansi-blue-fg">)</span>
-
-<span class="ansi-red-fg">OSError</span>: [Errno 98] Address already in use</pre>
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
-</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="How-Jupyter-notebooks-work">How Jupyter notebooks work<a class="anchor-link" href="#How-Jupyter-notebooks-work">&#182;</a></h2><p>Jupyter notebooks have a similar executor to the dask/distributed cluster. The flow of events looks something like this:</p>
+<ol>
+<li>User gets HTML page</li>
+<li>Websockets opened for communication with browser</li>
+<li>When code is added and run a message is sent by websockets</li>
+<li>Tornado handles this message and passes the Executor over the 0mq protocol</li>
+<li>When the task is done a message is sent back to tornado and then in tunr back to the browser</li>
+</ol>
+<p><img src="http://jupyter.readthedocs.io/en/latest/_images/notebook_components.png" alt=""></p>
+<p>Why Tornado for systems like this?</p>
+<p>The single threaded nature of Tornado makes it ideal for keeping multiple browser tabs up to date - it is impossible to append to a stream with multiple threads - we must use a single threaded server like Tornado or Node.js.</p>
 
 </div>
 </div>
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-Web-based-vidiprinter">A Web-based vidiprinter<a class="anchor-link" href="#A-Web-based-vidiprinter">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>See tornado_vidiprinter.py</p>
+<p>from tornado import gen, ioloop, web</p>
 
+<pre><code>@web.stream_request_body
+class Handler(web.RequestHandler):
+    @gen.coroutine
+    def get(self):
+        self.write('start&lt;br/&gt;')
+        yield self.flush()
+        yield gen.sleep(5)
+        self.write('finish\n')
+        yield self.flush()
+
+
+application = web.Application([(r'/', Handler)])
+application.listen(8889)
+ioloop.IOLoop.current().start()
+
+</code></pre>
+<p>We can start a streaming response, the real power though comes from using websockets with Tornado.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Excersise-5-Websockets-task">Excersise 5 Websockets task<a class="anchor-link" href="#Excersise-5-Websockets-task">&#182;</a></h3><p>Use websockets to create an ascii art clock in the browser or a live visualisation of the countries of the most recent wikipedia contributors</p>
+<p>If doing the visualisation, you can use the answer to Excersise</p>
+<p>The repo <a href="https://github.com/albertobeta/UberSimpleWebsockets">https://github.com/albertobeta/UberSimpleWebsockets</a> is a really great starting point.</p>
+
+</div>
+</div>
 </div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
